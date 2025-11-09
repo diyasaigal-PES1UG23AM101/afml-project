@@ -1,2 +1,11 @@
 requests
 trafilatura
+# RAG Pipeline dependencies
+faiss-cpu
+sentence-transformers
+transformers
+torch
+nltk
+numpy
+# Optional: for GPT-4 API
+openai
