@@ -238,7 +238,7 @@ This project is part of academic coursework at PES University.
 
 ## Acknowledgments
 
-- Course: Advanced Foundation Models Lab (AFML)
+- Course: Advanced Foundations of Machine Learning (AFML)
 - Institution: PES University
 - Semester: 5
 
