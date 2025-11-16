@@ -1,14 +1,14 @@
 # app/app.py
-import streamlit as st
-from src.rag_pipeline import RAGPipeline
+# IMPORTANT: Load environment variables FIRST before any other imports
 import os
-
-# Load environment variables from .env file
 try:
     from dotenv import load_dotenv
     load_dotenv()
 except ImportError:
     pass  # python-dotenv not installed
+
+import streamlit as st
+from src.rag_pipeline import RAGPipeline
 
 st.set_page_config(page_title="Tulu RAG Demo", page_icon="🗣️", layout="wide")
 
@@ -38,12 +38,22 @@ with st.sidebar:
     # Initialize pipeline button
     if st.button("Initialize/Update Pipeline"):
         model_map = {"GPT-4 (API)": "gpt4", "mBART": "mbart", "mT5": "mt5"}
-        with st.spinner("Loading models..."):
-            st.session_state.pipeline = RAGPipeline(
-                translation_model=model_map[translation_model],
-                use_reranking=use_reranking
-            )
-        st.success("Pipeline initialized!")
+        selected_model = model_map[translation_model]
+        
+        if selected_model in ["mbart", "mt5"]:
+            st.warning("⏳ **First-time download:** This will take 2-5 minutes to download the model (~1-2GB). Please be patient!")
+            st.info("💡 The model is being cached locally and will load instantly next time.")
+        
+        with st.spinner(f"Loading {translation_model} model... (check terminal for progress)"):
+            try:
+                st.session_state.pipeline = RAGPipeline(
+                    translation_model=selected_model,
+                    use_reranking=use_reranking
+                )
+                st.success(f"✅ Pipeline initialized with {translation_model}!")
+            except Exception as e:
+                st.error(f"❌ Error loading model: {str(e)}")
+                st.info("Try selecting a different model or check your internet connection.")
     
     st.markdown("---")
     st.markdown("### 📊 About")
@@ -69,6 +79,20 @@ if st.button("🔍 Ask", type="primary") and q.strip():
     if st.session_state.pipeline is None:
         st.warning("⚠️ Please initialize the pipeline first using the sidebar.")
     else:
+        # Check if FAISS index exists
+        index_path = "data/processed/faiss_index.bin"
+        if not os.path.exists(index_path):
+            st.error(f"❌ FAISS index not found at `{index_path}`")
+            st.info("""
+            **To build the index, you need to:**
+            1. Collect data: `python diya/src/scrape_wiki.py --limit 50`
+            2. Build dataset: `python src/build_full_dataset.py`
+            3. Create index: `python src/embed_index.py`
+            
+            **Or for testing, you can create a demo index with sample data.**
+            """)
+            st.stop()
+        
         with st.spinner("Retrieving and generating answer..."):
             try:
                 lang_code = {"English": "en", "Tulu": "tulu", "Both": "both"}[lang]

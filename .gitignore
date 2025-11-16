@@ -1,9 +1,14 @@
 # Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 .env
 venv/
+env/
 *.egg-info/
+dist/
+build/
 
 # Data files
 # ---
@@ -13,6 +18,41 @@ data/raw/
 data/processed/
 data/final/
 
+# Keep sample data
+!data/sample_test_data.jsonl
+
+# Models
+models/
+*.bin
+*.pt
+*.pth
+*.ckpt
+
+# Evaluation results
+*_results.json
+*_eval.json
+evaluation_results.json
+batch_results.json
+
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Logs
+*.log
+logs/
+
+# Cache
+.cache/
+*.cache
