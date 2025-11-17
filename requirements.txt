@@ -1,2 +1,10 @@
 requests
 trafilatura
+streamlit
+openai
+sentence-transformers
+faiss-cpu
+torch
+numpy
+python-dotenv
+groq
