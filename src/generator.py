@@ -1,14 +1,22 @@
 # src/generator.py
 import os
-import openai
+from groq import Groq
+from dotenv import load_dotenv
 
-openai.api_key = os.getenv("OPENAI_API_KEY")  # set in environment
+load_dotenv()
 
-def generate_openai(prompt: str, max_tokens=256, temperature=0.2):
-    resp = openai.ChatCompletion.create(
-        model="gpt-4o-mini", # or gpt-4o-mini or gpt-4o-mini-tts depending; use available
-        messages=[{"role":"user","content":prompt}],
+# The client will now find the GROQ_API_KEY from your .env file
+client = Groq()
+
+def generate_openai(prompt: str, max_tokens=256, temperature=0.1):
+    #Generates a response using the Groq API.
+    response = client.chat.completions.create(
+        # We use a powerful open-source model available on Groq
+        model="llama-3.1-8b-instant", 
+        messages=[
+            {"role": "user", "content": prompt}
+        ],
         temperature=temperature,
         max_tokens=max_tokens
     )
-    return resp["choices"][0]["message"]["content"].strip()
+    return response.choices[0].message.content.strip()
