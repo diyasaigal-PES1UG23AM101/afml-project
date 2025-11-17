@@ -16,3 +16,5 @@ data/final/
 # IDE
 .vscode/
 .idea/
+
+.env
